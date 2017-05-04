@@ -17,11 +17,13 @@ import org.lightgbm.predict4j.SparseVector;
  * @author lyg5623
  */
 public class UseageTest {
+    //your model path
     private static String modelPath = "LightGBM_model.txt";
 
     @Test
     public void test() throws FileNotFoundException, IOException {
         String path = UseageTest.class.getClassLoader().getResource(modelPath).getPath();
+      //your model path
         path = URLDecoder.decode(path, "utf8");
 
         Boosting boosting = Boosting.createBoosting(path);
