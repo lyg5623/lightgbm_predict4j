@@ -1,4 +1,4 @@
-package org.lightgbm.predict4j;
+package org.lightgbm.predict4j.v2;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,22 +8,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.lightgbm.predict4j.Boosting;
-import org.lightgbm.predict4j.OverallConfig;
-import org.lightgbm.predict4j.Predictor;
 import org.lightgbm.predict4j.SparseVector;
 
 /**
  * @author lyg5623
  */
 public class UseageTest {
-    //your model path
-    private static String modelPath = "LightGBM_model.txt";
+    // your model path
+    private static String modelPath = "LightGBM_modelv2.txt";
 
     @Test
-    public void test() throws FileNotFoundException, IOException {
+    public void testv2() throws FileNotFoundException, IOException {
         String path = UseageTest.class.getClassLoader().getResource(modelPath).getPath();
-      //your model path
+        // your model path
         path = URLDecoder.decode(path, "utf8");
 
         Boosting boosting = Boosting.createBoosting(path);
@@ -31,8 +28,11 @@ public class UseageTest {
         Map<String, String> map = new HashMap<String, String>();
         OverallConfig config = new OverallConfig();
         config.set(map);
-        Predictor predictor = new Predictor(boosting, config.getIoConfig().isPredictRawScore(),
-                config.getIoConfig().isPredictLeafIndex());
+        // create predictor
+        Predictor predictor =
+                new Predictor(boosting, config.io_config.num_iteration_predict, config.io_config.is_predict_raw_score,
+                        config.io_config.is_predict_leaf_index, config.io_config.pred_early_stop,
+                        config.io_config.pred_early_stop_freq, config.io_config.pred_early_stop_margin);
 
         // your data to predict
         int[] indices = {2, 6, 9};
@@ -43,6 +43,5 @@ public class UseageTest {
         System.out.println("predict values " + predicts.toString());
 
     }
-    
 
 }

@@ -1,5 +1,6 @@
 package org.lightgbm.predict4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -82,7 +83,6 @@ public class Common {
         return ret;
     }
 
-
     /*
      * ! \brief Do inplace softmax transformaton on p_rec \param p_rec The input/output vector of the values.
      */
@@ -99,6 +99,87 @@ public class Common {
         }
         for (int i = 0; i < rec.length; ++i) {
             rec[i] /= wsum;
+        }
+    }
+
+
+
+    public static List<String> split(String str, String delimiters) {
+        List<String> ret = new ArrayList<>();
+        int i = 0;
+        int pos = 0;
+        while (pos < str.length()) {
+            boolean met_delimiters = false;
+            for (int j = 0; j < delimiters.length(); ++j) {
+                if (str.charAt(pos) == delimiters.charAt(j)) {
+                    met_delimiters = true;
+                    break;
+                }
+            }
+            if (met_delimiters) {
+                if (i < pos) {
+                    ret.add(str.substring(i, pos));
+                }
+                ++pos;
+                i = pos;
+            } else {
+                ++pos;
+            }
+        }
+        if (i < pos) {
+            ret.add(str.substring(i));
+        }
+        return ret;
+    }
+
+
+    public static List<String> split(String str, char delimiter) {
+        List<String> ret = new ArrayList<>();
+        int i = 0;
+        int pos = 0;
+        while (pos < str.length()) {
+            if (str.charAt(pos) == delimiter) {
+                if (i < pos) {
+                    ret.add(str.substring(i, pos));
+                }
+                ++pos;
+                i = pos;
+            } else {
+                ++pos;
+            }
+        }
+        if (i < pos) {
+            ret.add(str.substring(i));
+        }
+        return ret;
+    }
+
+    public static String removeQuotationSymbol(String str) {
+        int from = 0;
+        while (from < str.length() && (str.charAt(from) == '\'' || str.charAt(from) == '"'))
+            from++;
+        int to = str.length() - 1;
+        while (to >= 0 && (str.charAt(to) == '\'' || str.charAt(to) == '"'))
+            to--;
+        to = to + 1;
+        if (from >= to)
+            return "";
+        else
+            return str.substring(from, to);
+    }
+
+    public static void softmax(double[] input, double[] output, int len) {
+        double wmax = input[0];
+        for (int i = 1; i < len; ++i) {
+            wmax = Math.max(input[i], wmax);
+        }
+        double wsum = 0.0f;
+        for (int i = 0; i < len; ++i) {
+            output[i] = Math.exp(input[i] - wmax);
+            wsum += output[i];
+        }
+        for (int i = 0; i < len; ++i) {
+            output[i] /= wsum;
         }
     }
 }
