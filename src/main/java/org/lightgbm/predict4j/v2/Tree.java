@@ -104,7 +104,11 @@ public class Tree implements Serializable {
         if (key_vals.containsKey("default_value")) {
             defaultValue = Common.stringToArrayDouble(key_vals.get("default_value"), " ", numLeaves - 1);
         } else {
-            logger.error("Tree model string format error, should contain default_value field");
+            logger.debug("Assuming default values as 0.0");
+            this.defaultValue = new double[threshold.length];
+            for(int i=0; i<threshold.length; i++) {
+                this.defaultValue[i] = 0.0;
+            }
         }
 
         if (key_vals.containsKey("leaf_value")) {
