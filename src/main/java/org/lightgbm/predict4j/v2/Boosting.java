@@ -18,7 +18,7 @@ public abstract class Boosting implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(Boosting.class);
     private static final long serialVersionUID = -3370589073161617590L;
 
-    static Boosting createBoosting(String filename) throws FileNotFoundException, IOException {
+    public static Boosting createBoosting(String filename) throws IOException {
         String type = getBoostingTypeFromModelFile(filename);
         Boosting boosting = null;
         if (type.equals("tree")) {
@@ -30,7 +30,7 @@ public abstract class Boosting implements Serializable {
         return boosting;
     }
 
-    static Boosting createBoosting(String type, String filename) throws FileNotFoundException, IOException {
+    public static Boosting createBoosting(String type, String filename) throws FileNotFoundException, IOException {
         if (filename == null || filename.length() == 0) {
             if (type.equals("gbdt")) {
                 return new GBDT();
@@ -62,7 +62,7 @@ public abstract class Boosting implements Serializable {
         }
     }
 
-    static boolean loadFileToBoosting(Boosting boosting, String filename) throws FileNotFoundException, IOException {
+    public static boolean loadFileToBoosting(Boosting boosting, String filename) throws IOException {
         if (boosting != null) {
             StringBuilder sb = new StringBuilder();
             List<String> lines = IOUtils.readLines(new FileInputStream(filename));
@@ -76,28 +76,28 @@ public abstract class Boosting implements Serializable {
         return true;
     }
 
-    static String getBoostingTypeFromModelFile(String filename) throws FileNotFoundException, IOException {
+    public static String getBoostingTypeFromModelFile(String filename) throws IOException {
         List<String> lines = IOUtils.readLines(new FileInputStream(filename));
         return lines.get(0);
     }
 
-    abstract boolean loadModelFromString(String modelStr);
+    abstract public boolean loadModelFromString(String modelStr);
 
-    abstract boolean needAccuratePrediction();
+    abstract public boolean needAccuratePrediction();
 
-    abstract int numberOfClasses();
+    abstract public int numberOfClasses();
 
-    abstract void initPredict(int num_iteration);
+    abstract public void initPredict(int num_iteration);
 
-    abstract int numPredictOneRow(int num_iteration, boolean is_pred_leaf);
+    abstract public int numPredictOneRow(int num_iteration, boolean is_pred_leaf);
 
-    abstract int getCurrentIteration();
+    abstract public int getCurrentIteration();
 
-    abstract int maxFeatureIdx();
+    abstract public int maxFeatureIdx();
 
-    abstract List<Double> predictLeafIndex(SparseVector vector);
+    abstract public List<Double> predictLeafIndex(SparseVector vector);
 
-    abstract List<Double> predictRaw(SparseVector vector, PredictionEarlyStopInstance early_stop);
+    abstract public List<Double> predictRaw(SparseVector vector, PredictionEarlyStopInstance early_stop);
 
-    abstract List<Double> predict(SparseVector vector, PredictionEarlyStopInstance early_stop);
+    abstract public List<Double> predict(SparseVector vector, PredictionEarlyStopInstance early_stop);
 }
