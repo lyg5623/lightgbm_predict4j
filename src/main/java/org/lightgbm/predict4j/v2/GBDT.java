@@ -34,7 +34,8 @@ public class GBDT extends Boosting {
     /* ! \brief current iteration */
     int iter_;
 
-    boolean loadModelFromString(String model_str) {
+    @Override
+    public boolean loadModelFromString(String model_str) {
         // use serialized string to restore this object
         models_.clear();
         String[] lines = model_str.split("\n");
@@ -134,7 +135,7 @@ public class GBDT extends Boosting {
         return true;
     }
 
-    boolean needAccuratePrediction() {
+    public boolean needAccuratePrediction() {
         if (objective_function_ == null) {
             return true;
         } else {
@@ -142,18 +143,18 @@ public class GBDT extends Boosting {
         }
     }
 
-    int numberOfClasses() {
+    public int numberOfClasses() {
         return num_class_;
     }
 
-    void initPredict(int num_iteration) {
+    public void initPredict(int num_iteration) {
         num_iteration_for_pred_ = models_.size() / num_tree_per_iteration_;
         if (num_iteration > 0) {
             num_iteration_for_pred_ = Math.min(num_iteration + (boost_from_average_ ? 1 : 0), num_iteration_for_pred_);
         }
     }
 
-    int numPredictOneRow(int num_iteration, boolean is_pred_leaf) {
+    public int numPredictOneRow(int num_iteration, boolean is_pred_leaf) {
         int num_preb_in_one_row = num_class_;
         if (is_pred_leaf) {
             int max_iteration = getCurrentIteration();
@@ -166,15 +167,15 @@ public class GBDT extends Boosting {
         return num_preb_in_one_row;
     }
 
-    int getCurrentIteration() {
+    public int getCurrentIteration() {
         return models_.size() / num_tree_per_iteration_;
     }
 
-    int maxFeatureIdx() {
+    public int maxFeatureIdx() {
         return max_feature_idx_;
     }
 
-    List<Double> predictLeafIndex(SparseVector vector) {
+    public List<Double> predictLeafIndex(SparseVector vector) {
         List<Double> outputs=new ArrayList<>();
         for (int i = 0; i < num_iteration_for_pred_; ++i) {
             for (int j = 0; j < num_class_; ++j) {
@@ -184,7 +185,7 @@ public class GBDT extends Boosting {
         return outputs;
     }
 
-    List<Double> predictRaw(SparseVector features, PredictionEarlyStopInstance early_stop) {
+    public List<Double> predictRaw(SparseVector features, PredictionEarlyStopInstance early_stop) {
         double[] output = new double[num_class_];
         int early_stop_round_counter = 0;
         for (int i = 0; i < num_iteration_for_pred_; ++i) {
@@ -204,7 +205,7 @@ public class GBDT extends Boosting {
         return ret;
     }
 
-    List<Double> predict(SparseVector features, PredictionEarlyStopInstance early_stop) {
+    public List<Double> predict(SparseVector features, PredictionEarlyStopInstance early_stop) {
         List<Double> ret=predictRaw(features, early_stop);;
         if (objective_function_ != null) {
             double[]output=new double[ret.size()];
